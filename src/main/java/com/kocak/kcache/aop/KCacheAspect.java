@@ -1,46 +1,33 @@
 package com.kocak.kcache.aop;
 
 import com.kocak.kcache.annotations.KCacheable;
-import com.kocak.kcache.annotations.KCacheEvict;
-import com.kocak.kcache.annotations.KCachePut;
-import com.kocak.kcache.core.KCacheManager;
+import com.kocak.kcache.core.CacheStore;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Aspect
 @Component
 public class KCacheAspect {
-
-    private final KCacheManager cacheManager = KCacheManager.getInstance();
+    private final CacheStore cacheStore = new CacheStore();
 
     @Around("@annotation(kCacheable)")
-    public Object handleKCacheable(ProceedingJoinPoint joinPoint, KCacheable kCacheable) throws Throwable {
+    public Object handleCache(ProceedingJoinPoint joinPoint, KCacheable kCacheable) throws Throwable {
         String key = kCacheable.key();
+        String cacheName = kCacheable.cacheName();
+        long expireAfter = kCacheable.expireAfter();
+        int expireAfterAccessCount = kCacheable.expireAfterAccessCount();
 
-        if (cacheManager.containsKey(key)) {
-            return cacheManager.get(key);
+        Object cachedValue = cacheStore.get(cacheName + ":" + key);
+        if (Objects.nonNull(cachedValue)) {
+            return cachedValue;
         }
 
         Object result = joinPoint.proceed();
-        cacheManager.put(key, result);
+        cacheStore.put(cacheName + ":" + key, result, expireAfter, expireAfterAccessCount);
         return result;
-    }
-
-    @Around("@annotation(kCachePut)")
-    public Object handleKCachePut(ProceedingJoinPoint joinPoint, KCachePut kCachePut) throws Throwable {
-        String key = kCachePut.key();
-
-        Object result = joinPoint.proceed();
-        cacheManager.put(key, result);
-        return result;
-    }
-
-    @Before("@annotation(kCacheEvict)")
-    public void handleKCacheEvict(KCacheEvict kCacheEvict) {
-        String key = kCacheEvict.key();
-        cacheManager.evict(key);
     }
 }

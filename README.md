@@ -76,6 +76,23 @@ public class CacheAdmin {
 
 Bu örnekte, `CacheAdmin` sınıfı belirli bir cache'i veya tüm cache'leri temizlemek için kullanılabilir.
 
+```java
+@Service
+public class ExampleService {
+
+    @KCacheable(cacheName = "exampleCache", key = "#id", expireAfter = 60000, expireAfterAccessCount = 3)
+    public String getData(String id) {
+        //işlem
+        return "Data for ID: " + id;
+    }
+}
+```
+Bu örnekte:
+
+Cache, 60 saniye (60000 ms) sonra geçerliliğini kaybeder.
+Aynı veri cache'den en fazla 3 kez okunabilir; 4. kez çağrıldığında cache sıfırlanır.
+
+
 ## Konfigürasyon
 ### application.properties Ayarları
 K-CACHE için özelleştirilmiş ayarları `application.properties` dosyasına ekleyebilirsiniz:
