@@ -11,9 +11,9 @@
     </parent>
 
     <groupId>com.kocak</groupId>
-    <artifactId>K-CACHE</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>K-CACHE</name>
+    <artifactId>k-cache</artifactId>
+    <version>1.0.0</version>
+    <name>k-cache</name>
     <description>K-CACHE</description>
     <url/>
     <licenses>
