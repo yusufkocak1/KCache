@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestService {
 
-    @KCacheable(cacheName = "exampleCache", key = "exampleKey")
+    @KCacheable(key = "exampleKey")
     public String getCachedData() {
         return "Cached Data";
     }

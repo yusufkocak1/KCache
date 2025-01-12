@@ -23,6 +23,12 @@ public class CacheController {
         return ResponseEntity.ok("Cache has been cleared!");
     }
 
+    @PostMapping("/evict")
+    public ResponseEntity<String> evictCache(@RequestBody String key) {
+        cacheManager.evict(key);
+        return ResponseEntity.ok("Cache has been evicted!");
+    }
+
     @GetMapping("/statistics")
     public ResponseEntity<String> getCacheStatistics() {
         return ResponseEntity.ok(cacheManager.getStatistics());

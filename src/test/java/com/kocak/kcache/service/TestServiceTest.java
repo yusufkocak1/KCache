@@ -27,7 +27,7 @@ public class TestServiceTest {
         // İlk çalıştırmada metot çağrılmalı
         String result1 = testService.getCachedData();
         assertEquals("Cached Data", result1);
-        assertTrue(cacheManager.containsKey("exampleKey")); // contains yerine containsKey kullanıldı
+        assertTrue(cacheManager.containsKey("exampleKey"));
 
         // İkinci çalıştırmada cache kullanılmalı
         String result2 = testService.getCachedData();

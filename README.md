@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExampleService {
 
-    @KCacheable(cacheName = "exampleCache", key = "#id")
+    @KCacheable(key = "#id")
     public String getData(String id) {
         // Burada ağır bir işlem simüle edilebilir.
         return "Data for ID: " + id;
@@ -65,11 +65,11 @@ public class CacheAdmin {
     private KCacheManager cacheManager;
 
     public void clearSpecificCache(String cacheName) {
-        cacheManager.clearCache(cacheName);
+        cacheManager.evict(key);
     }
 
     public void clearAllCaches() {
-        cacheManager.clearAllCaches();
+        cacheManager.clear();
     }
 }
 ```
@@ -80,7 +80,7 @@ Bu örnekte, `CacheAdmin` sınıfı belirli bir cache'i veya tüm cache'leri tem
 @Service
 public class ExampleService {
 
-    @KCacheable(cacheName = "exampleCache", key = "#id", expireAfter = 60000, expireAfterAccessCount = 3)
+    @KCacheable(key = "#id", expireAfter = 60000, expireAfterAccessCount = 3)
     public String getData(String id) {
         //işlem
         return "Data for ID: " + id;
@@ -98,23 +98,11 @@ Aynı veri cache'den en fazla 3 kez okunabilir; 4. kez çağrıldığında cache
 K-CACHE için özelleştirilmiş ayarları `application.properties` dosyasına ekleyebilirsiniz:
 
 ```properties
-kcache.default-ttl=3600  # Cache ömrü (saniye cinsinden)
-kcache.max-entries=100   # Maksimum giriş sayısı
+Kcache.port=8080  # port
 ```
 
 ## Sürüm Bilgileri
-- **Sürüm:** 1.0.0-SNAPSHOT
+- **Sürüm:** 1.0.1
 - **Java Versiyonu:** 21
 - **Spring Framework Versiyonu:** 3.4.2
-
-## Hata Ayıklama
-K-CACHE ile ilgili bir sorunla karşılaşırsanız, aşağıdaki adımları izleyebilirsiniz:
-1. **Logları Kontrol Edin:**
-    - `application.properties` dosyasına şu ayarı ekleyerek K-CACHE loglarını etkinleştirebilirsiniz:
-   ```properties
-   logging.level.com.kocak.kcache=DEBUG
-   ```
-
-2. **GitHub Bağımlılığı:**
-    - `settings.xml` dosyasındaki GitHub token ayarlarınızı kontrol edin.
 

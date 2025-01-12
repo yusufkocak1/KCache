@@ -1,12 +1,13 @@
 package com.kocak.kcache.core;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class KCacheManager {
 
     private static final int MAX_CACHE_SIZE = 10;
     private static final long EXPIRATION_TIME = 60000; // 60 saniye
-    private static final LinkedHashMap<String, CacheItem> cache = new LinkedHashMap<>(MAX_CACHE_SIZE, 0.75f, true);
+    private final ConcurrentHashMap<String, CacheEntry> cache = new ConcurrentHashMap<>();
 
     private static int hitCount = 0;
     private static int missCount = 0;
@@ -21,32 +22,38 @@ public class KCacheManager {
         }
         return instance;
     }
-
+    public void put(String key, Object value, long expireAfter, int expireAfterAccessCount) {
+        CacheEntry entry = new CacheEntry(value, expireAfter, expireAfterAccessCount);
+        cache.put(key, entry);
+    }
     public void put(String key, Object value) {
-        if (cache.size() >= MAX_CACHE_SIZE) {
-            Iterator<Map.Entry<String, CacheItem>> iterator = cache.entrySet().iterator();
-            if (iterator.hasNext()) {
-                iterator.next();
-                iterator.remove();
-            }
+        CacheEntry entry = new CacheEntry(value, -1, -1);
+        cache.put(key, entry);
+    }
+    public Object get(String key) {
+        CacheEntry entry = cache.get(key);
+        if (entry == null || entry.isExpired()) {
+            cache.remove(key);
+            missCount++;
+            return null;
         }
-        CacheItem cacheItem = new CacheItem(value, System.currentTimeMillis());
-        cache.put(key, cacheItem);
+        entry.incrementAccessCount();
+        if (entry.isAccessLimitReached()) {
+            cache.remove(key);
+            missCount++;
+            return null;
+        }
+
+        hitCount++;
+        return entry.getValue();
+    }
+    public CacheEntry getEntry(String key) {
+        return cache.get(key);
     }
 
-    public Object get(String key) {
-        CacheItem cacheItem = cache.get(key);
-        if (cacheItem != null && !isExpired(cacheItem)) {
-            hitCount++;
-            return cacheItem.getValue();
-        }
-        missCount++;
-        evict(key);
-        return null;
-    }
 
     public boolean containsKey(String key) {
-        return cache.containsKey(key) && !isExpired(cache.get(key));
+        return cache.containsKey(key) && !cache.get(key).isExpired();
     }
 
     public void evict(String key) {
@@ -59,7 +66,7 @@ public class KCacheManager {
 
     public Map<String, Object> getCache() {
         Map<String, Object> result = new LinkedHashMap<>();
-        for (Map.Entry<String, CacheItem> entry : cache.entrySet()) {
+        for (Map.Entry<String, CacheEntry> entry : cache.entrySet()) {
             result.put(entry.getKey(), entry.getValue().getValue());
         }
         return result;
@@ -69,25 +76,4 @@ public class KCacheManager {
         return "Hits: " + hitCount + ", Misses: " + missCount;
     }
 
-    private boolean isExpired(CacheItem cacheItem) {
-        return (System.currentTimeMillis() - cacheItem.getTimestamp()) > EXPIRATION_TIME;
-    }
-
-    private static class CacheItem {
-        private final Object value;
-        private final long timestamp;
-
-        public CacheItem(Object value, long timestamp) {
-            this.value = value;
-            this.timestamp = timestamp;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public long getTimestamp() {
-            return timestamp;
-        }
-    }
 }
