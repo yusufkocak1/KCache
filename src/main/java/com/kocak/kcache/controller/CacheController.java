@@ -6,8 +6,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+
+/*
+ * @author Yusuf Kocak
+ */
 @RestController
-@RequestMapping("/cache")
+@RequestMapping("/kcache")
 public class CacheController {
 
     private final KCacheManager cacheManager = KCacheManager.getInstance();
