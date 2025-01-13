@@ -39,4 +39,15 @@ public class CacheEntry {
     public int getAccessLimit() {
         return accessLimit;
     }
+
+    @Override
+    public String toString() {
+        return "CacheEntry{" +
+                "value=" + value +
+                ", expireAfter=" + expireAfter +
+                ", accessLimit=" + accessLimit +
+                ", creationTime=" + creationTime +
+                ", accessCount=" + accessCount +
+                '}';
+    }
 }
