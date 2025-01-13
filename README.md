@@ -7,7 +7,7 @@ K-CACHE, Maven projenize bir bağımlılık olarak eklenebilir. Bunun için `pom
 <dependency>
     <groupId>com.kocak</groupId>
     <artifactId>K-CACHE</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0.1</version>
 </dependency>
 ```
 
@@ -18,6 +18,25 @@ Eğer bu bağımlılığı GitHub Package Registry üzerinden alıyorsanız, ilg
 K-CACHE, Spring uygulamanızda kolayca kullanılabilir. Bir metodu cachelemek için `@KCacheable` anotasyonunu kullanabilirsiniz.
 
 **Örnek Kullanım:**
+```java
+package com.kocak.sample;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.kocak.sample", "com.kocak.kcache"})
+public class KCacheSampleApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(KCacheSampleApplication.class, args);
+    }
+
+}
+
+```
 
 ```java
 import com.kocak.kcache.annotation.KCacheable;
