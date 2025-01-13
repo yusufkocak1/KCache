@@ -67,7 +67,7 @@ public class KCacheManager {
     public Map<String, Object> getCache() {
         Map<String, Object> result = new LinkedHashMap<>();
         for (Map.Entry<String, CacheEntry> entry : cache.entrySet()) {
-            result.put(entry.getKey(), entry.getValue().getValue());
+            result.put(entry.getKey(), entry.getValue().getValue().toString());
         }
         return result;
     }
