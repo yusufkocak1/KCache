@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KCache Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<h1>KCache Manager</h1>
+<div>
+  <button id="fetch-cache">fetch Cache</button>
+  <button id="clear-cache">Clear Cache</button>
+  <button id="fetch-statistics">Fetch Statistics</button>
+</div>
+<h2>Cache Content</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Key</th>
+    <th>Value</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody id="cache-table-body">
+  <!-- Cache data will be inserted here -->
+  </tbody>
+</table>
+<h2>Statistics</h2>
+<p id="statistics">No data yet.</p>
+
+<script>
+  const cacheTableBody = document.getElementById('cache-table-body');
+  const statisticsParagraph = document.getElementById('statistics');
+
+  // Fetch cache content and append "Evict" button
+  function fetchCache() {
+    fetch('/kcache/get')
+            .then(response => response.json())
+            .then(data => {
+              cacheTableBody.innerHTML = '';
+              Object.entries(data).forEach(([key, value]) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${key}</td>
+                        <td>${value}</td>
+                        <td><button class="evict-button" data-key="${key}">Evict</button></td>
+                    `;
+                cacheTableBody.appendChild(row);
+              });
+
+              // Add event listeners for Evict buttons
+              document.querySelectorAll('.evict-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                  const key = e.target.getAttribute('data-key');
+                  evictCache(key);
+                });
+              });
+            })
+            .catch(err => console.error('Error fetching cache:', err));
+  }
+
+  // Clear all cache
+  document.getElementById('clear-cache').addEventListener('click', () => {
+    fetch('/kcache/clear', { method: 'POST' })
+            .then(response => response.text())
+            .then(message => {
+              alert(message);
+              fetchCache();
+            })
+            .catch(err => console.error('Error clearing cache:', err));
+  });
+
+  // Fetch cache
+  document.getElementById('fetch-cache').addEventListener('click', () => {
+    fetchCache();
+  });
+  // Fetch statistics
+  document.getElementById('fetch-statistics').addEventListener('click', () => {
+    fetch('/kcache/statistics')
+            .then(response => response.text())
+            .then(stats => {
+              statisticsParagraph.textContent = stats;
+            })
+            .catch(err => console.error('Error fetching statistics:', err));
+  });
+
+  // Evict cache for a specific key
+  function evictCache(key) {
+    fetch('/kcache/evict', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(key)
+    })
+            .then(response => response.text())
+            .then(message => {
+              alert(message);
+              fetchCache(); // Refresh cache list after eviction
+            })
+            .catch(err => console.error('Error evicting cache:', err));
+  }
+
+  // Initial load
+  fetchCache();
+</script>
+</body>
+</html>

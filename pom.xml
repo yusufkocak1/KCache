@@ -12,7 +12,7 @@
 
     <groupId>com.kocak</groupId>
     <artifactId>k-cache</artifactId>
-    <version>1.0.1.0</version>
+    <version>1.0.0.0</version>
     <name>k-cache</name>
     <description>K-CACHE</description>
     <url/>
@@ -42,26 +42,27 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>6.1.14</version>
+            <version>6.2.2-SNAPSHOT</version>
         </dependency>
         <!-- Spring AOP -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>6.0.16</version>
+            <version>6.2.2-SNAPSHOT</version>
         </dependency>
         <!-- AspectJ Runtime -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
-            <version>1.9.20</version>
+            <version>1.9.22.1</version>
         </dependency>
         <!-- AspectJ Weaver -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.9.20</version>
+            <version>1.9.22.1</version>
         </dependency>
+
     </dependencies>
 
     <build>

@@ -16,7 +16,7 @@ public class CacheController {
 
     private final KCacheManager cacheManager = KCacheManager.getInstance();
 
-    @GetMapping("/")
+    @GetMapping("/get")
     public ResponseEntity<Map<String, Object>> getCache() {
         return ResponseEntity.ok(cacheManager.getCache());
     }
@@ -37,4 +37,5 @@ public class CacheController {
     public ResponseEntity<String> getCacheStatistics() {
         return ResponseEntity.ok(cacheManager.getStatistics());
     }
+
 }
