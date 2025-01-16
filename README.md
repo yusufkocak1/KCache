@@ -7,7 +7,7 @@ K-CACHE, Maven projenize bir bağımlılık olarak eklenebilir. Bunun için `pom
 <dependency>
     <groupId>com.kocak</groupId>
     <artifactId>K-CACHE</artifactId>
-    <version>1.0.0.1</version>
+    <version>1.0.0.0</version>
 </dependency>
 ```
 
@@ -121,7 +121,7 @@ Kcache.port=8080  # port
 ```
 
 ## Sürüm Bilgileri
-- **Sürüm:** 1.0.1
+- **Sürüm:** 1.0.0.0
 - **Java Versiyonu:** 21
 - **Spring Framework Versiyonu:** 3.4.2
 
